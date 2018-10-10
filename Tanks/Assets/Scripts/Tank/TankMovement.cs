@@ -73,7 +73,12 @@ public class TankMovement : MonoBehaviour
 
         else
         {
-
+            if (m_MovementAudio.clip == m_EngineIdling)
+            {
+                m_MovementAudio.clip = m_EngineDriving;
+                m_MovementAudio.pitch = Random.Range(m_OriginalPitch - m_PitchRange, m_OriginalPitch + m_PitchRange);
+                m_MovementAudio.Play();
+            }
         }
     }
 
@@ -81,17 +86,26 @@ public class TankMovement : MonoBehaviour
     private void FixedUpdate()
     {
         // Move and turn the tank.
+        Move();
+        Turn();
     }
 
 
     private void Move()
     {
         // Adjust the position of the tank based on the player's input.
+        Vector3 movement = transform.forward * m_MovementInputValue * m_Speed *Time.deltaTime;
+
+        m_Rigidbody.MovePosition(m_Rigidbody.position + movement);
     }
 
 
     private void Turn()
     {
         // Adjust the rotation of the tank based on the player's input.
+        float turn = m_TurnInputValue * m_TurnSpeed * Time.deltaTime;
+
+        Quaternion turnRotation = Quaternion.Euler(0f, turn, 0f);
+        m_Rigidbody.MoveRotation(m_Rigidbody.rotation * turnRotation);
     }
 }
